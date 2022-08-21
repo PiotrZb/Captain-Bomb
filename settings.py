@@ -1,7 +1,7 @@
 layout = [
     '                         ',
     '                         ',
-    '            XX           ',
+    'P           XX           ',
     'XX           XXXX        ',
     '     XX          X       ',
     'X                XX    XX',
