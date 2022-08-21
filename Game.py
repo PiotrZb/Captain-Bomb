@@ -1,7 +1,8 @@
 import pygame
 
-from settings import  *
-from Level import  Level
+from settings import *
+from Level import Level
+
 
 class Game:
 
@@ -10,7 +11,7 @@ class Game:
         self.status = 'on'
 
         # window
-        self.screen = pygame.display.set_mode((screen_width,screen_height),pygame.RESIZABLE | pygame.SCALED)
+        self.screen = pygame.display.set_mode((screen_width, screen_height), pygame.RESIZABLE | pygame.SCALED)
         pygame.display.set_caption('King and Pigs')
 
         # main clock
@@ -18,7 +19,7 @@ class Game:
 
         # fps font
         pygame.font.init()
-        self.font = pygame.font.SysFont("Arial" , 18 , bold = True)
+        self.font = pygame.font.SysFont("Arial", 18, bold=True)
 
         # Levels
         self.Level1 = Level(layout)
@@ -40,7 +41,6 @@ class Game:
     def run(self):
 
         while self.status == 'on':
-
             self.check_events()
             self.screen.fill((0, 0, 0))
 
