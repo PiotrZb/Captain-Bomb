@@ -1,5 +1,7 @@
 import pygame
+
 from settings import  *
+from Level import  Level
 
 class Game:
 
@@ -17,6 +19,9 @@ class Game:
         # fps font
         pygame.font.init()
         self.font = pygame.font.SysFont("Arial" , 18 , bold = True)
+
+        # Levels
+        self.Level1 = Level(layout)
 
     def check_events(self):
 
@@ -40,6 +45,7 @@ class Game:
             self.screen.fill((0, 0, 0))
 
             # draw elements here
+            self.Level1.draw(self.screen)
 
             self.show_fps()
             pygame.display.update()
