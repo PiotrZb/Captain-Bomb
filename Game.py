@@ -44,6 +44,9 @@ class Game:
             self.check_events()
             self.screen.fill((0, 0, 0))
 
+            # updates
+            self.Level1.update()
+
             # draw elements here
             self.Level1.draw(self.screen)
 

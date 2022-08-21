@@ -15,4 +15,4 @@ layout = [
 tile_size = 64
 
 screen_width = 1280
-screen_height = 11 * tile_size
+screen_height = len(layout) * tile_size
