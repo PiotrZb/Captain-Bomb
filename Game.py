@@ -30,6 +30,9 @@ class Game:
 
             if event.type == pygame.QUIT:
                 self.status = 'off'
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_j:
+                    pygame.display.toggle_fullscreen()
 
     def show_fps(self):
 
