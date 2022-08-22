@@ -17,6 +17,9 @@ class Level:
         # player
         self.player = pygame.sprite.GroupSingle()
 
+        # bombs
+        self.bombs = pygame.sprite.Group()
+
         # reading layout and player starting position from settings
         self.read_layout()
 
@@ -36,12 +39,18 @@ class Level:
         self.tiles.update(self.tiles_shift_vector)
 
         # player
-        self.player.update(self.tiles)
+        self.player.update(self.tiles, self.bombs)
+
+        # bombs
+        self.bombs.update(self.tiles_shift_vector)
+        for bomb in self.bombs.sprites():
+            if not bomb.exist: self.bombs.remove(bomb)
 
     def draw(self, screen):
 
         self.tiles.draw(screen)
         self.player.draw(screen)
+        self.bombs.draw(screen)
 
     def shift_tiles(self):
 

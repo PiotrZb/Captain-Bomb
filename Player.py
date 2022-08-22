@@ -1,7 +1,8 @@
 import pygame
 
 from functions import import_animation
-from settings import player_speed, jump_speed, animation_rate
+from settings import player_speed, jump_speed, animation_rate, hp, bomb_rate, gravity
+from Bomb import Bomb
 
 
 class Player(pygame.sprite.Sprite):
@@ -28,17 +29,19 @@ class Player(pygame.sprite.Sprite):
         # movement
         self.speed = player_speed
         self.shift_vector = pygame.math.Vector2(0, 0)
-        self.gravity = 0.51
+        self.gravity = gravity
         self.jump_speed = jump_speed
         self.facing_direction = 'right'
         self.previous_status = 'idle'
         self.current_status = 'idle'
 
         # player traits
-        self.hp = 100
+        self.hp = hp
         self.is_alive = True
         self.get_fall_dmg = False
         self.get_dmg = False
+        self.bombs = pygame.sprite.Group()
+        self.bomb_timer = pygame.time.get_ticks()
 
     def change_animation(self, type):
         self.animation_type = type
@@ -137,6 +140,13 @@ class Player(pygame.sprite.Sprite):
         if pressed_keys[pygame.K_SPACE] and self.shift_vector.y == 0:
             self.shift_vector.y = self.jump_speed
 
+        # setting bomb
+        if pressed_keys[pygame.K_f] and pygame.time.get_ticks() - self.bomb_timer > bomb_rate:
+            self.bombs.add(Bomb(self.rect,True))
+            self.bomb_timer = pygame.time.get_ticks()
+        else:
+            self.bombs = pygame.sprite.Group()
+
     def collisions(self, tiles):
 
         # horizontal movement
@@ -174,7 +184,7 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.gravity = 0.51
 
-    def update(self, tiles):
+    def update(self, tiles, bombs_list):
 
         if self.hp > 0:
             self.control()
@@ -183,3 +193,6 @@ class Player(pygame.sprite.Sprite):
 
         self.set_animation()
         self.animate()
+
+        bombs_list.add(self.bombs)
+
