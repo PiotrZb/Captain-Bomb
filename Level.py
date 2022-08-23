@@ -2,7 +2,7 @@ import pygame
 
 from Tile import Tile
 from Player import Player
-from settings import tile_size, screen_width, player_speed
+from settings import tile_size, screen_width, player_speed, bomb_radius, bomb_dmg
 
 
 class Level:
@@ -42,9 +42,14 @@ class Level:
         self.player.update(self.tiles, self.bombs)
 
         # bombs
-        self.bombs.update(self.tiles_shift_vector)
+        self.bombs.update(self.tiles,self.tiles_shift_vector)
         for bomb in self.bombs.sprites():
             if not bomb.exist: self.bombs.remove(bomb)
+            if bomb.animation_type == 'explosion' and bomb.animation_index == 0:
+                player_vec = pygame.math.Vector2(self.player.sprite.rect.center)
+                if player_vec.distance_to(bomb.rect.center) <= bomb_radius:
+                    self.player.sprite.get_dmg = True
+                    self.player.sprite.hp -= bomb_dmg
 
     def draw(self, screen):
 

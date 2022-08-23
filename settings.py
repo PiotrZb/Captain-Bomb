@@ -23,5 +23,7 @@ jump_speed = -12
 bomb_delay = 2000
 bomb_rate = 1000
 gravity = 0.51
+bomb_radius = 100
+bomb_dmg = 25
 
 animation_rate = 0.2
