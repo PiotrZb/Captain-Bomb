@@ -1,10 +1,11 @@
 import pygame
 
+from Moveable import Moveable
 from functions import import_animation
-from settings import animation_rate, bomb_delay, gravity
+from settings import animation_rate, bomb_delay
 
 
-class Bomb(pygame.sprite.Sprite):
+class Bomb(Moveable):
 
     def __init__(self, player_rect, bomb_on=False):
 
@@ -27,48 +28,12 @@ class Bomb(pygame.sprite.Sprite):
         self.exist = True
         self.on_timer = pygame.time.get_ticks()
 
-        self.speed = 0
-        self.shift_vector = pygame.math.Vector2(0,0)
-        self.gravity = gravity
-
         # self.impact_area =
 
     def load_textures(self, textures_path):
 
         for animation_type in self.animations:
             self.animations[animation_type] = import_animation(textures_path + '/' + animation_type)
-
-    def collisions(self, tiles):
-
-        # horizontal movement
-        self.rect.x += self.shift_vector.x * self.speed
-
-        for tile in tiles.sprites():
-
-            if tile.rect.colliderect(self.rect):
-                if self.shift_vector.x < 0:
-                    self.rect.left = tile.rect.right
-                    self.shift_vector.x = 0
-                elif self.shift_vector.x > 0:
-                    self.rect.right = tile.rect.left
-                    self.shift_vector.x = 0
-
-        # vertical movement
-        self.shift_vector.y += self.gravity
-        self.rect.y += self.shift_vector.y
-
-        for tile in tiles.sprites():
-
-            if tile.rect.colliderect(self.rect):
-                if self.shift_vector.y < 0:
-                    self.rect.top = tile.rect.bottom
-                    self.shift_vector.y = 0.0001
-                elif self.shift_vector.y > 0:
-                    self.rect.bottom = tile.rect.top
-                    self.gravity = 0
-                    self.shift_vector.y = 0
-            else:
-                self.gravity = 0.51
 
     def animate(self):
 

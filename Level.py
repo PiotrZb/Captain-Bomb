@@ -48,8 +48,7 @@ class Level:
             if bomb.animation_type == 'explosion' and bomb.animation_index == 0:
                 player_vec = pygame.math.Vector2(self.player.sprite.rect.center)
                 if player_vec.distance_to(bomb.rect.center) <= bomb_radius:
-                    self.player.sprite.get_dmg = True
-                    self.player.sprite.hp -= bomb_dmg
+                    self.player.sprite.dmg = bomb_dmg
 
     def draw(self, screen):
 

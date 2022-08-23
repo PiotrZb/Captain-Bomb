@@ -3,9 +3,10 @@ import pygame
 from functions import import_animation
 from settings import player_speed, jump_speed, animation_rate, hp, bomb_rate, gravity
 from Bomb import Bomb
+from Moveable import Alive
 
 
-class Player(pygame.sprite.Sprite):
+class Player(Alive):
 
     def __init__(self, pos):
 
@@ -27,10 +28,6 @@ class Player(pygame.sprite.Sprite):
         self.rect.topleft = pos
 
         # movement
-        self.speed = player_speed
-        self.shift_vector = pygame.math.Vector2(0, 0)
-        self.gravity = gravity
-        self.jump_speed = jump_speed
         self.facing_direction = 'right'
         self.previous_status = 'idle'
         self.current_status = 'idle'
@@ -38,8 +35,7 @@ class Player(pygame.sprite.Sprite):
         # player traits
         self.hp = hp
         self.is_alive = True
-        self.get_fall_dmg = False
-        self.get_dmg = False
+        self.dmg = 0
         self.bombs = pygame.sprite.Group()
         self.bomb_timer = pygame.time.get_ticks()
 
@@ -98,10 +94,8 @@ class Player(pygame.sprite.Sprite):
     def set_animation(self):
 
         if not self.non_looped_animation_in_progress and self.hp > 0:
-            if (self.get_fall_dmg or self.get_dmg) and self.animation_type != 'hit':
+            if (self.fall_dmg > 0 or self.dmg > 0) and self.animation_type != 'hit':
                 self.change_animation('hit')
-                self.get_dmg = False
-                self.get_fall_dmg = False
             elif self.current_status == 'running' and self.animation_type != 'run':
                 self.change_animation('run')
             elif self.current_status == 'idle' and self.animation_type != 'idle':
@@ -113,9 +107,9 @@ class Player(pygame.sprite.Sprite):
             elif self.current_status == 'landing' and self.animation_type != 'ground':
                 self.change_animation('ground')
         elif self.hp <= 0 and self.animation_type not in ['dead ground', 'dead hit']:
-            if self.get_fall_dmg:
+            if self.fall_dmg > 0:
                 self.change_animation('dead ground')
-            elif self.get_dmg:
+            elif self.dmg > 0:
                 self.change_animation('dead hit')
 
     def control(self):
@@ -123,17 +117,17 @@ class Player(pygame.sprite.Sprite):
         pressed_keys = pygame.key.get_pressed()
 
         # move right
-        if pressed_keys[pygame.K_d]:
+        if pressed_keys[pygame.K_d] and self.current_status in ['running','idle']:
             self.shift_vector.x = 1
             self.facing_direction = 'right'
 
         # move left
-        if pressed_keys[pygame.K_a]:
+        if pressed_keys[pygame.K_a] and self.current_status in ['running','idle']:
             self.shift_vector.x = -1
             self.facing_direction = 'left'
 
         # stop
-        if not (pressed_keys[pygame.K_d] or pressed_keys[pygame.K_a]):
+        if not (pressed_keys[pygame.K_d] or pressed_keys[pygame.K_a])  and self.current_status in ['running','idle']:
             self.shift_vector.x = 0
 
         # jump
@@ -147,43 +141,6 @@ class Player(pygame.sprite.Sprite):
         else:
             self.bombs = pygame.sprite.Group()
 
-    def collisions(self, tiles):
-
-        # horizontal movement
-        self.rect.x += self.shift_vector.x * self.speed
-
-        for tile in tiles.sprites():
-
-            if tile.rect.colliderect(self.rect):
-                if self.shift_vector.x < 0:
-                    self.rect.left = tile.rect.right
-                    self.shift_vector.x = 0
-                elif self.shift_vector.x > 0:
-                    self.rect.right = tile.rect.left
-                    self.shift_vector.x = 0
-
-        # vertical movement
-        self.shift_vector.y += self.gravity
-        self.rect.y += self.shift_vector.y
-
-        for tile in tiles.sprites():
-
-            if tile.rect.colliderect(self.rect):
-                if self.shift_vector.y < 0:
-                    self.rect.top = tile.rect.bottom
-                    self.shift_vector.y = 0.0001
-                elif self.shift_vector.y > 0:
-                    self.rect.bottom = tile.rect.top
-
-                    # fall dmg
-                    if self.shift_vector.y > 17:
-                        self.hp -= 10 * (self.shift_vector.y - 17)
-                        self.get_fall_dmg = True
-                    self.gravity = 0
-                    self.shift_vector.y = 0
-            else:
-                self.gravity = 0.51
-
     def update(self, tiles, bombs_list):
 
         if self.hp > 0:
@@ -193,6 +150,14 @@ class Player(pygame.sprite.Sprite):
 
         self.set_animation()
         self.animate()
+
+        if self.fall_dmg > 0:
+            self.hp -= self.fall_dmg
+            if self.hp > 0: self.fall_dmg = 0
+
+        if self.dmg > 0:
+            self.hp -= self.dmg
+            if self.hp > 0: self.dmg = 0
 
         bombs_list.add(self.bombs)
 
