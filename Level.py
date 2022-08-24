@@ -63,8 +63,10 @@ class Level:
                 for group in self.alive:
                     for creature in group.sprites():
                         creature_vec = pygame.math.Vector2(creature.rect.center)
-                        if creature_vec.distance_to(bomb.rect.center) <= bomb_radius:
-                            creature.dmg = bomb_dmg
+                        distance = creature_vec.distance_to(bomb.rect.midbottom)
+                        if distance <= bomb_radius:
+                            creature.hit_by_bomb(bomb.rect.midbottom)
+                            creature.dmg = (bomb_radius - distance) / 3
 
                 bomb.give_dmg = False
 

@@ -72,7 +72,7 @@ class Player(Alive):
             self.facing_direction = 'left'
 
         # stop
-        if not (pressed_keys[pygame.K_d] or pressed_keys[pygame.K_a]) and self.current_status in ['running', 'idle']:
+        if not (pressed_keys[pygame.K_d] or pressed_keys[pygame.K_a]) and self.current_status in ['running', 'idle'] and not self.hit_by_bomb_status:
             self.shift_vector.x = 0
 
         # jump
@@ -91,11 +91,12 @@ class Player(Alive):
         # movement update
         if self.is_alive:
             self.control()
-            self.collisions(tiles)
             self.update_status()
         else:
             self.shift_vector.x = 0
             self.shift_vector.y = 0
+
+        self.collisions(tiles)
 
         # animation update
         self.update_animation()
@@ -107,7 +108,8 @@ class Player(Alive):
             self.animate(False)
 
         # applying dmg
-        self.apply_dmg()
+        if self.is_alive:
+            self.apply_dmg()
 
         # adding new bombs to list
         bombs_list.add(self.bombs)

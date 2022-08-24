@@ -1,6 +1,7 @@
 import pygame
+import math
 
-from settings import gravity, jump_speed, animation_rate, hp
+from settings import gravity, jump_speed, animation_rate, hp, bomb_radius
 from functions import import_animation
 
 
@@ -21,6 +22,47 @@ class Moveable(pygame.sprite.Sprite):
         # additional attributes
         self.jump_speed = jump_speed
         self.fall_dmg = 0
+        self.hit_by_bomb_status = False
+
+    def hit_by_bomb(self,bomb_bottom):
+
+        self.hit_by_bomb_status = True
+
+        # distance
+        bomb_vec = pygame.math.Vector2(bomb_bottom)
+        self_vec = pygame.math.Vector2(self.rect.center)
+        distance = bomb_vec.distance_to(self_vec)
+
+        # angle
+        if self_vec.x - bomb_vec.x != 0:
+            tg_alpha = abs(self_vec.y - bomb_vec.y) / abs(self_vec.x - bomb_vec.x)
+            alpha = math.atan(tg_alpha)
+        else:
+            alpha = math.atan(math.inf)
+
+        # setting vertical and horizontal speed
+        scalar = (bomb_radius - distance)/25
+
+        # bomb on left
+        vx = math.cos(alpha) * scalar
+
+        # bomb above
+        vy = math.sin(alpha) * scalar * 3
+
+        # bomb on right
+        if self_vec.x < bomb_vec.x:
+            vx = -vx
+        elif self_vec.x == bomb_vec.x:
+            vx = 0
+
+        # bomb under
+        if self_vec.y < bomb_vec.y:
+            vy = -vy
+        elif self_vec.y == bomb_vec.y:
+            vy = 0
+
+        self.shift_vector.y += vy
+        self.shift_vector.x += vx
 
     def collisions(self, tiles):
 
@@ -30,6 +72,7 @@ class Moveable(pygame.sprite.Sprite):
         for tile in tiles.sprites():
 
             if tile.rect.colliderect(self.rect):
+                self.hit_by_bomb_status = False
                 if self.shift_vector.x < 0:
                     self.rect.left = tile.rect.right
                     self.shift_vector.x = 0
@@ -44,6 +87,7 @@ class Moveable(pygame.sprite.Sprite):
         for tile in tiles.sprites():
 
             if tile.rect.colliderect(self.rect):
+                self.hit_by_bomb_status = False
                 if self.shift_vector.y < 0:
                     self.rect.top = tile.rect.bottom
                     self.shift_vector.y = 0.0001
