@@ -28,9 +28,13 @@ class Game:
 
         for event in pygame.event.get():
 
+            # game exit
             if event.type == pygame.QUIT:
                 self.status = 'off'
+
             elif event.type == pygame.KEYDOWN:
+
+                # fullscreen mode
                 if event.key == pygame.K_j:
                     pygame.display.toggle_fullscreen()
 
@@ -44,6 +48,7 @@ class Game:
     def run(self):
 
         while self.status == 'on':
+
             self.check_events()
             self.screen.fill((0, 0, 0))
 

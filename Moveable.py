@@ -3,6 +3,7 @@ import pygame
 from settings import gravity, jump_speed, animation_rate, hp
 from functions import import_animation
 
+
 class Moveable(pygame.sprite.Sprite):
 
     def __init__(self):
@@ -10,7 +11,7 @@ class Moveable(pygame.sprite.Sprite):
         super().__init__()
 
         # sprite attributes
-        self.rect = pygame.rect.Rect(0,0,0,0)
+        self.rect = pygame.rect.Rect(0, 0, 0, 0)
 
         # basic attributes
         self.shift_vector = pygame.math.Vector2(0, 0)
@@ -58,6 +59,7 @@ class Moveable(pygame.sprite.Sprite):
             else:
                 self.gravity = 0.51
 
+
 class Animated(pygame.sprite.Sprite):
 
     def __init__(self):
@@ -85,7 +87,7 @@ class Animated(pygame.sprite.Sprite):
         for animation_type in self.animations.keys():
             self.animations[animation_type] = import_animation(textures_path + '/' + animation_type)
 
-    def animate(self,flip = False):
+    def animate(self, flip=False):
 
         # setting image
         self.image = self.animations[self.animation_type][int(self.animation_index)]
@@ -98,7 +100,8 @@ class Animated(pygame.sprite.Sprite):
 
         # checking if index is out of range
         if self.animation_index >= len(self.animations[self.animation_type]):
-            if self.animation_type in self.looped_animations: self.animation_index = 0
+            if self.animation_type in self.looped_animations:
+                self.animation_index = 0
             else:
                 self.animation_index = len(self.animations[self.animation_type]) - 1
                 self.non_looped_animation_in_progress = False
@@ -106,7 +109,8 @@ class Animated(pygame.sprite.Sprite):
         # updating size
         self.rect.size = self.image.get_size()
 
-class Alive(Moveable,Animated):
+
+class Alive(Moveable, Animated):
 
     def __init__(self):
 
@@ -117,7 +121,7 @@ class Alive(Moveable,Animated):
         self.dmg = 0
         self.current_status = 'idle'
 
-    def set_status(self):
+    def update_status(self):
 
         if self.shift_vector == (0, 0) and self.current_status != 'falling':
             self.current_status = 'idle'
@@ -136,9 +140,8 @@ class Alive(Moveable,Animated):
         self.hp -= (self.dmg + self.fall_dmg)
 
         # checking if creature is dead
-        if self.hp <= 0: self.is_alive = False
+        if self.hp <= 0:
+            self.is_alive = False
         else:
             self.dmg = 0
             self.fall_dmg = 0
-
-

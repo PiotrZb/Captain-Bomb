@@ -33,9 +33,12 @@ class Bomb(Moveable, Animated):
 
     def update_status(self):
 
+        # checking if the bomb should explode
         if self.status == 'bomb on' and pygame.time.get_ticks() - self.on_timer > bomb_delay:
             self.status = 'explosion'
             self.give_dmg = True
+
+        # checking if object should be removed
         elif self.status == 'explosion' and not self.non_looped_animation_in_progress:
             self.exist = False
 
@@ -43,8 +46,10 @@ class Bomb(Moveable, Animated):
 
         if self.status == 'bomb off' and self.animation_type != 'bomb off':
             self.change_animation('bomb off')
+
         elif self.status == 'bomb on' and self.animation_type != 'bomb on':
             self.change_animation('bomb on')
+
         elif self.status == 'explosion' and self.animation_type != 'explosion':
             self.change_animation('explosion')
 
@@ -53,9 +58,12 @@ class Bomb(Moveable, Animated):
         if self.status != 'explosion': self.collisions(tiles)
 
         if self.exist:
+
             self.update_status()
             self.update_animation()
             self.animate()
+
+            # updating position
             if self.status == 'explosion': self.rect.center = self.old_rect_center
             self.rect.x += tiles_shift_vector.x
             self.rect.y += tiles_shift_vector.y
