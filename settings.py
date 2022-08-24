@@ -4,7 +4,7 @@ layout = [
     'P           XX           ',
     'XX           XXXX        ',
     '     XX          X       ',
-    'X                XX    XX',
+    'X       X        XX    XX',
     'X           XX           ',
     'X                        ',
     'X      XXXXX     XX      ',
@@ -23,7 +23,7 @@ jump_speed = -12
 bomb_delay = 2000
 bomb_rate = 1000
 gravity = 0.51
-bomb_radius = 100
+bomb_radius = 150
 bomb_dmg = 25
 
 animation_rate = 0.2
