@@ -16,20 +16,21 @@ class Moveable(pygame.sprite.Sprite):
 
         # basic attributes
         self.shift_vector = pygame.math.Vector2(0, 0)
-        self.speed = 0
+        self.speed = 1
         self.gravity = gravity
+        self.additional_xvel = 0
 
         # additional attributes
         self.jump_speed = jump_speed
         self.fall_dmg = 0
         self.hit_by_bomb_status = False
 
-    def hit_by_bomb(self,bomb_bottom):
+    def hit_by_bomb(self,bomb_midbottom):
 
         self.hit_by_bomb_status = True
 
         # distance
-        bomb_vec = pygame.math.Vector2(bomb_bottom)
+        bomb_vec = pygame.math.Vector2(bomb_midbottom)
         self_vec = pygame.math.Vector2(self.rect.center)
         distance = bomb_vec.distance_to(self_vec)
 
@@ -41,13 +42,13 @@ class Moveable(pygame.sprite.Sprite):
             alpha = math.atan(math.inf)
 
         # setting vertical and horizontal speed
-        scalar = (bomb_radius - distance)/25
+        scalar = (bomb_radius - distance)/20
 
         # bomb on left
         vx = math.cos(alpha) * scalar
 
         # bomb above
-        vy = math.sin(alpha) * scalar * 3
+        vy = math.sin(alpha) * scalar * 2
 
         # bomb on right
         if self_vec.x < bomb_vec.x:
@@ -62,23 +63,24 @@ class Moveable(pygame.sprite.Sprite):
             vy = 0
 
         self.shift_vector.y += vy
-        self.shift_vector.x += vx
+        self.additional_xvel += vx
 
     def collisions(self, tiles):
 
         # horizontal movement
         self.rect.x += self.shift_vector.x * self.speed
+        self.rect.x += self.additional_xvel
 
         for tile in tiles.sprites():
 
             if tile.rect.colliderect(self.rect):
                 self.hit_by_bomb_status = False
-                if self.shift_vector.x < 0:
+                if (self.shift_vector.x + self.additional_xvel) < 0:
                     self.rect.left = tile.rect.right
-                    self.shift_vector.x = 0
-                elif self.shift_vector.x > 0:
+                elif (self.shift_vector.x + self.additional_xvel) > 0:
                     self.rect.right = tile.rect.left
-                    self.shift_vector.x = 0
+                self.shift_vector.x = 0
+                self.additional_xvel = 0
 
         # vertical movement
         self.shift_vector.y += self.gravity
@@ -100,6 +102,7 @@ class Moveable(pygame.sprite.Sprite):
                     self.rect.bottom = tile.rect.top
                     self.gravity = 0
                     self.shift_vector.y = 0
+                    self.additional_xvel = 0
             else:
                 self.gravity = 0.51
 
@@ -150,9 +153,6 @@ class Animated(pygame.sprite.Sprite):
                 self.animation_index = len(self.animations[self.animation_type]) - 1
                 self.non_looped_animation_in_progress = False
 
-        # updating size
-        self.rect.size = self.image.get_size()
-
 
 class Alive(Moveable, Animated):
 
@@ -169,7 +169,7 @@ class Alive(Moveable, Animated):
 
         if self.shift_vector == (0, 0) and self.current_status != 'falling':
             self.current_status = 'idle'
-        elif self.shift_vector == (0, 0) and self.current_status == 'falling':
+        elif self.shift_vector.y == 0 and self.current_status == 'falling':
             self.current_status = 'landing'
         elif self.shift_vector.x != 0 and self.shift_vector.y == 0:
             self.current_status = 'running'
@@ -177,6 +177,7 @@ class Alive(Moveable, Animated):
             self.current_status = 'falling'
         elif self.shift_vector.y < 0:
             self.current_status = 'jumping'
+
 
     def apply_dmg(self):
 

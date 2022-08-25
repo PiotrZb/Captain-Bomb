@@ -2,7 +2,7 @@ import pygame
 
 from settings import bomb_rate
 from Bomb import Bomb
-from Moveable import Alive
+from Moveable_Animated_Alive import Alive
 
 
 class Player(Alive):
@@ -90,8 +90,8 @@ class Player(Alive):
 
         # movement update
         if self.is_alive:
-            self.control()
             self.update_status()
+            self.control()
         else:
             self.shift_vector.x = 0
             self.shift_vector.y = 0

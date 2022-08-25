@@ -1,6 +1,6 @@
 import pygame
 
-from Moveable import Moveable, Animated
+from Moveable_Animated_Alive import Moveable, Animated
 from settings import bomb_delay
 
 
