@@ -6,7 +6,7 @@ from settings import bomb_delay
 
 class Bomb(Moveable, Animated):
 
-    def __init__(self, player_rect, bomb_on=False):
+    def __init__(self, player_rect, player_shift, bomb_on=False):
 
         super().__init__()
 
@@ -30,6 +30,10 @@ class Bomb(Moveable, Animated):
         if bomb_on: self.status = 'bomb on'
         else: self.status = 'bomb off'
         self.give_dmg = False
+
+        # setting starting velocity
+        self.additional_xvel = player_shift.x * 6
+        self.additional_yvel = player_shift.y * 1.5
 
     def update_status(self):
 
@@ -64,6 +68,7 @@ class Bomb(Moveable, Animated):
             self.animate()
 
             # updating position
+            self.rect.size = self.image.get_size()
             if self.status == 'explosion': self.rect.center = self.old_rect_center
             self.rect.x += tiles_shift_vector.x
             self.rect.y += tiles_shift_vector.y

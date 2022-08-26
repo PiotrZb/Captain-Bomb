@@ -4,6 +4,7 @@ from Tile import Tile
 from Player import Player
 from settings import tile_size, screen_width, player_speed, bomb_radius
 from Particles import Particles
+import Enemies
 
 
 class Level:
@@ -18,6 +19,8 @@ class Level:
         # lists of moveable objects
         self.alive = []
         self.others = []
+        self.enemies = pygame.sprite.Group()
+        self.alive.append(self.enemies)
 
         # player
         self.player = pygame.sprite.GroupSingle()
@@ -44,6 +47,10 @@ class Level:
                 elif type == 'P':
                     self.player.add(Player((x * tile_size, y * tile_size)))
 
+                # enemys
+                elif type == 'B':
+                    self.enemies.add(Enemies.BaldPirate((x * tile_size, y * tile_size)))
+
     def update(self):
 
         # map
@@ -54,6 +61,9 @@ class Level:
         self.player.update(self.tiles, self.bombs)
         player = self.player.sprite
         self.player_particles.sprite.update(player.rect.midbottom, player.facing_direction, self.tiles_shift_vector, player.current_status)
+
+        # enemies
+        self.enemies.update(self.tiles, self.tiles_shift_vector, player.rect)
 
         # bombs
         self.bombs.update(self.tiles, self.tiles_shift_vector)
@@ -89,8 +99,9 @@ class Level:
 
         self.tiles.draw(screen)
         self.player.draw(screen)
-        if self.player_particles.sprite.visible:
+        if self.player_particles.sprite.visible and self.player.sprite.is_alive:
             self.player_particles.draw(screen)
+        self.enemies.draw(screen)
         self.bombs.draw(screen)
 
     def shift_tiles(self):

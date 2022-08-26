@@ -81,7 +81,7 @@ class Player(Alive):
 
         # drop bomb
         if pressed_keys[pygame.K_f] and pygame.time.get_ticks() - self.bomb_timer > bomb_rate:
-            self.bombs.add(Bomb(self.rect, True))
+            self.bombs.add(Bomb(self.rect, self.shift_vector, True))
             self.bomb_timer = pygame.time.get_ticks()
         else:
             self.bombs = pygame.sprite.Group()
@@ -92,9 +92,6 @@ class Player(Alive):
         if self.is_alive:
             self.update_status()
             self.control()
-        else:
-            self.shift_vector.x = 0
-            self.shift_vector.y = 0
 
         self.collisions(tiles)
 

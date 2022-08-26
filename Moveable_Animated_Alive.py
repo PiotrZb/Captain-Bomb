@@ -19,6 +19,7 @@ class Moveable(pygame.sprite.Sprite):
         self.speed = 1
         self.gravity = gravity
         self.additional_xvel = 0
+        self.additional_yvel = 0
 
         # additional attributes
         self.jump_speed = jump_speed
@@ -85,24 +86,28 @@ class Moveable(pygame.sprite.Sprite):
         # vertical movement
         self.shift_vector.y += self.gravity
         self.rect.y += self.shift_vector.y
+        self.rect.y += self.additional_yvel
 
         for tile in tiles.sprites():
 
             if tile.rect.colliderect(self.rect):
                 self.hit_by_bomb_status = False
-                if self.shift_vector.y < 0:
+                if (self.shift_vector.y + self.additional_yvel) < 0:
                     self.rect.top = tile.rect.bottom
                     self.shift_vector.y = 0.0001
-                elif self.shift_vector.y > 0:
+                elif (self.shift_vector.y + self.additional_yvel) > 0:
 
                     # fall dmg
                     if self.shift_vector.y > 17:
-                        self.fall_dmg = (self.shift_vector.y - 17) * 10
+                        self.fall_dmg = ((self.shift_vector.y + self.additional_yvel) - 17) * 10
 
                     self.rect.bottom = tile.rect.top
                     self.gravity = 0
                     self.shift_vector.y = 0
                     self.additional_xvel = 0
+
+                self.additional_yvel = 0
+
             else:
                 self.gravity = 0.51
 
