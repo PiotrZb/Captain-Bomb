@@ -72,7 +72,8 @@ class Player(Alive):
             self.facing_direction = 'left'
 
         # stop
-        if not (pressed_keys[pygame.K_d] or pressed_keys[pygame.K_a]) and self.current_status in ['running', 'idle'] and not self.hit_by_bomb_status:
+        if not (pressed_keys[pygame.K_d] or pressed_keys[pygame.K_a]) and self.current_status in ['running',
+                                                                                                  'idle'] and not self.hit_by_bomb_status and not self.hit_by_enemy_status:
             self.shift_vector.x = 0
 
         # jump

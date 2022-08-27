@@ -63,7 +63,7 @@ class Level:
         self.player_particles.sprite.update(player.rect.midbottom, player.facing_direction, self.tiles_shift_vector, player.current_status)
 
         # enemies
-        self.enemies.update(self.tiles, self.tiles_shift_vector, player.rect)
+        self.enemies.update(self.tiles, self.tiles_shift_vector, player)
 
         # bombs
         self.bombs.update(self.tiles, self.tiles_shift_vector)

@@ -25,6 +25,19 @@ class Moveable(pygame.sprite.Sprite):
         self.jump_speed = jump_speed
         self.fall_dmg = 0
         self.hit_by_bomb_status = False
+        self.hit_by_enemy_status = False
+
+    def hit_by_enemy(self, dir):
+
+        self.hit_by_enemy_status = True
+
+        self.additional_yvel -= 8
+
+        if dir == 'right':
+            self.additional_xvel += 4
+        else:
+            self.additional_xvel -= 4
+
 
     def hit_by_bomb(self,bomb_midbottom):
 
@@ -76,6 +89,7 @@ class Moveable(pygame.sprite.Sprite):
 
             if tile.rect.colliderect(self.rect):
                 self.hit_by_bomb_status = False
+                self.hit_by_enemy_status = False
                 if (self.shift_vector.x + self.additional_xvel) < 0:
                     self.rect.left = tile.rect.right
                 elif (self.shift_vector.x + self.additional_xvel) > 0:
@@ -92,6 +106,7 @@ class Moveable(pygame.sprite.Sprite):
 
             if tile.rect.colliderect(self.rect):
                 self.hit_by_bomb_status = False
+                self.hit_by_enemy_status = False
                 if (self.shift_vector.y + self.additional_yvel) < 0:
                     self.rect.top = tile.rect.bottom
                     self.shift_vector.y = 0.0001
