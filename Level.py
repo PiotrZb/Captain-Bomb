@@ -1,19 +1,23 @@
+import sys
+
 import pygame
 
-from Tile import Tile
+import Tile
+import SimpleObjects
 from Player import Player
-from settings import tile_size, screen_width, player_speed, bomb_radius
+from settings import tile_size, screen_width, player_speed, bomb_radius, level_textures
 from Particles import Particles
 import Enemies
 
 
 class Level:
 
-    def __init__(self, layout):
+    def __init__(self, layouts):
 
         # map
-        self.tiles = pygame.sprite.Group()
-        self.layout = layout
+        self.colidable_tiles = pygame.sprite.Group()
+        self.noncolidable_tiles = pygame.sprite.Group()
+        self.layouts = layouts
         self.tiles_shift_vector = pygame.math.Vector2(0, 0)
 
         # lists of moveable objects
@@ -32,41 +36,52 @@ class Level:
         self.bombs = pygame.sprite.Group()
         self.others.append(self.bombs)
 
-        # reading layout and player starting position from settings
-        self.read_layout()
+        self.load_level()
 
-    def read_layout(self):
+    def load_level(self):
 
-        for y, row in enumerate(self.layout):
-            for x, type in enumerate(row):
+        for key in self.layouts.keys():
 
-                if type == 'X':
-                    self.tiles.add(Tile((x * tile_size, y * tile_size), tile_size))
+            layout = self.layouts[key]
 
-                # reading player starting position
-                elif type == 'P':
-                    self.player.add(Player((x * tile_size, y * tile_size)))
+            for y, row in enumerate(layout):
+                for x, type in enumerate(row):
 
-                # enemys
-                elif type == 'B':
-                    self.enemies.add(Enemies.BaldPirate((x * tile_size, y * tile_size)))
+                    if type != '-1':
+                        match key:
+                            case 'terrain':
+                                self.colidable_tiles.add(Tile.TerrainTile((x * tile_size, y * tile_size), type))
+                            case 'background terrain':
+                                self.noncolidable_tiles.add(Tile.BackgroundTerrainTile((x * tile_size, y * tile_size), type))
+                            case 'creatures':
+                                if type == '18':
+                                    self.player.add(Player((x * tile_size, y * tile_size)))
+                                elif type == '17':
+                                    self.enemies.add(Enemies.BaldPirate((x * tile_size, y * tile_size)))
+                            case 'shelves':
+                                self.colidable_tiles.add(Tile.Shelves((x * tile_size, y * tile_size), type))
+                            case 'background objects':
+
+                                if type == '13':
+                                    self.noncolidable_tiles.add(SimpleObjects.Window((x * tile_size, y * tile_size)))
 
     def update(self):
 
         # map
         self.shift_tiles()
-        self.tiles.update(self.tiles_shift_vector)
+        self.colidable_tiles.update(self.tiles_shift_vector)
+        self.noncolidable_tiles.update(self.tiles_shift_vector)
 
         # player
-        self.player.update(self.tiles, self.bombs)
+        self.player.update(self.colidable_tiles, self.bombs)
         player = self.player.sprite
         self.player_particles.sprite.update(player.rect.midbottom, player.facing_direction, self.tiles_shift_vector, player.current_status)
 
         # enemies
-        self.enemies.update(self.tiles, self.tiles_shift_vector, player)
+        self.enemies.update(self.colidable_tiles, self.tiles_shift_vector, player)
 
         # bombs
-        self.bombs.update(self.tiles, self.tiles_shift_vector)
+        self.bombs.update(self.colidable_tiles, self.tiles_shift_vector)
         for bomb in self.bombs.sprites():
 
             # removal of used bombs
@@ -97,7 +112,8 @@ class Level:
 
     def draw(self, screen):
 
-        self.tiles.draw(screen)
+        self.noncolidable_tiles.draw(screen)
+        self.colidable_tiles.draw(screen)
         self.player.draw(screen)
         if self.player_particles.sprite.visible and self.player.sprite.is_alive:
             self.player_particles.draw(screen)

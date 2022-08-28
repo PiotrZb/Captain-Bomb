@@ -22,7 +22,9 @@ class Game:
         self.font = pygame.font.SysFont("Arial", 18, bold=True)
 
         # Levels
-        self.Level1 = Level(layout)
+        load_textures()
+        self.Level1 = Level(layouts1)
+
 
     def check_events(self):
 
