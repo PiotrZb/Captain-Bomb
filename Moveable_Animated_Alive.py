@@ -15,11 +15,11 @@ class Moveable(pygame.sprite.Sprite):
         self.rect = pygame.rect.Rect(0, 0, 0, 0)
 
         # basic attributes
-        self.shift_vector = pygame.math.Vector2(0, 0)
+        self.shift_vector = pygame.math.Vector2(0.0, 0.0)
         self.speed = 1
         self.gravity = gravity
-        self.additional_xvel = 0
-        self.additional_yvel = 0
+        self.additional_xvel = 0.0
+        self.additional_yvel = 0.0
 
         # additional attributes
         self.jump_speed = jump_speed
@@ -90,9 +90,9 @@ class Moveable(pygame.sprite.Sprite):
             if tile.rect.colliderect(self.rect):
                 self.hit_by_bomb_status = False
                 self.hit_by_enemy_status = False
-                if (self.shift_vector.x + self.additional_xvel) < 0:
+                if (self.shift_vector.x + self.additional_xvel) < 0 and tile.rect.center[0] < self.rect.center[0]:
                     self.rect.left = tile.rect.right
-                elif (self.shift_vector.x + self.additional_xvel) > 0:
+                elif (self.shift_vector.x + self.additional_xvel) > 0 and tile.rect.center[0] > self.rect.center[0]:
                     self.rect.right = tile.rect.left
                 self.shift_vector.x = 0
                 self.additional_xvel = 0
@@ -107,10 +107,10 @@ class Moveable(pygame.sprite.Sprite):
             if tile.rect.colliderect(self.rect):
                 self.hit_by_bomb_status = False
                 self.hit_by_enemy_status = False
-                if (self.shift_vector.y + self.additional_yvel) < 0:
+                if (self.shift_vector.y + self.additional_yvel) < 0 and tile.rect.center[1] < self.rect.center[1]:
                     self.rect.top = tile.rect.bottom
                     self.shift_vector.y = 0.0001
-                elif (self.shift_vector.y + self.additional_yvel) > 0:
+                elif (self.shift_vector.y + self.additional_yvel) > 0 and tile.rect.center[1] > self.rect.center[1]:
 
                     # fall dmg
                     if self.shift_vector.y > 17:

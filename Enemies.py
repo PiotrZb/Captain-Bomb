@@ -127,3 +127,8 @@ class BaldPirate(Alive):
         # applying dmg
         if self.is_alive:
             self.apply_dmg()
+
+        # eliminating some bugs
+        self.rect.size = self.image.get_size()
+        if not self.is_alive and self.shift_vector.y:
+            self.shift_vector.x = 0

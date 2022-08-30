@@ -111,3 +111,8 @@ class Player(Alive):
 
         # adding new bombs to list
         bombs_list.add(self.bombs)
+
+        # eliminating some bugs
+        self.rect.size = self.image.get_size()
+        if not self.is_alive and self.shift_vector.y:
+            self.shift_vector.x = 0
