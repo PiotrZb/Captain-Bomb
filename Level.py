@@ -3,6 +3,7 @@ import sys
 import pygame
 from random import randint
 
+
 import Tile
 import StaticObjects
 from Player import Player
@@ -26,6 +27,7 @@ class Level:
         self.alive = []
         self.others = []
         self.enemies = pygame.sprite.Group()
+        self.enemies_particles = pygame.sprite.Group()
         self.alive.append(self.enemies)
 
         # player
@@ -61,6 +63,7 @@ class Level:
                                     self.player.add(Player((x * tile_size, y * tile_size)))
                                 elif type == '17':
                                     self.enemies.add(Enemies.BaldPirate((x * tile_size, y * tile_size)))
+                                    self.enemies_particles.add(Particles())
                             case 'shelves':
                                 self.colidable_tiles.add(Tile.Shelves((x * tile_size, y * tile_size), type))
                             case 'background objects':
@@ -163,6 +166,8 @@ class Level:
 
         # enemies
         self.enemies.update(self.colidable_tiles, self.tiles_shift_vector, player)
+        for index,enemy in enumerate(self.enemies):
+            self.enemies_particles.sprites()[index].update(enemy.rect.midbottom, enemy.facing_direction, self.tiles_shift_vector, enemy.current_status)
 
         # bombs
         self.bombs.update(self.colidable_tiles, self.tiles_shift_vector)
@@ -195,11 +200,11 @@ class Level:
                 bomb.give_dmg = False
 
         # doors
-        player_rect = self.player.sprite.rect
+        player_center = self.player.sprite.rect.center
         for door in self.doors:
-            if door.rect.contains(player_rect) and door.animation_type != 'opening':
+            if door.rect.collidepoint(player_center) and door.animation_type != 'opening':
                 door.change_animation('opening')
-            elif door.animation_type != 'closing' and not door.rect.contains(player_rect):
+            elif door.animation_type != 'closing' and not door.rect.collidepoint(player_center):
                 door.change_animation('closing')
 
 
@@ -211,6 +216,12 @@ class Level:
         if self.player_particles.sprite.visible and self.player.sprite.is_alive:
             self.player_particles.draw(screen)
         self.enemies.draw(screen)
+        for index, particles in enumerate(self.enemies_particles.sprites()):
+            if particles.visible and self.enemies.sprites()[index].is_alive:
+                sprite = pygame.sprite.GroupSingle()
+                sprite.add(particles)
+                sprite.draw(screen)
+
         self.bombs.draw(screen)
 
     def shift_tiles(self):
