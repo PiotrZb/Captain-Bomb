@@ -40,6 +40,9 @@ class Level:
         self.bombs = pygame.sprite.Group()
         self.others.append(self.bombs)
 
+        # hearts
+        self.hearts = pygame.sprite.Group()
+
         self.load_level()
 
     def load_level(self):
@@ -149,6 +152,10 @@ class Level:
                                 elif type == '0':
                                     self.doors.append(StaticObjects.Door((x * tile_size, y * tile_size)))
 
+                                # hearts
+                                elif type == '16':
+                                    self.hearts.add(StaticObjects.Heart((x * tile_size, y * tile_size)))
+
         self.noncolidable_tiles.add(self.doors)
 
     def update(self):
@@ -200,12 +207,25 @@ class Level:
                 bomb.give_dmg = False
 
         # doors
-        player_center = self.player.sprite.rect.center
+        player_center = player.rect.center
         for door in self.doors:
             if door.rect.collidepoint(player_center) and door.animation_type != 'opening':
                 door.change_animation('opening')
             elif door.animation_type != 'closing' and not door.rect.collidepoint(player_center):
                 door.change_animation('closing')
+
+        # hearts
+        self.hearts.update(self.tiles_shift_vector)
+        player_rect = player.rect
+        for heart in self.hearts.sprites():
+            if player_rect.contains(heart.rect) and heart.animation_type != 'collected':
+                heart.change_animation('collected')
+                player.dmg = -25
+
+            elif heart.animation_type == 'collected' and not heart.non_looped_animation_in_progress:
+                self.hearts.remove(heart)
+
+
 
 
     def draw(self, screen):
@@ -223,6 +243,7 @@ class Level:
                 sprite.draw(screen)
 
         self.bombs.draw(screen)
+        self.hearts.draw(screen)
 
     def shift_tiles(self):
 

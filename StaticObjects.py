@@ -24,6 +24,32 @@ class StaticObject(pygame.sprite.Sprite):
         self.shift(shift_vector)
 
 
+class Heart(Animated):
+
+    def __init__(self, pos):
+
+        super().__init__()
+
+        self.animations = {'idle':[], 'collected':[]}
+        self.load_textures('textures/heart')
+        self.looped_animations = ['idle']
+        self.animation_type = 'idle'
+        self.image = self.animations[self.animation_type][0]
+        self.rect = self.image.get_rect()
+        self.rect.topleft = pos
+        self.offset = pygame.Vector2((tile_size/2) - (self.rect.width/2), 30)
+        self.rect.topleft += self.offset
+
+    def shift(self, shift_vector):
+
+        self.rect.x += shift_vector.x
+        self.rect.y += shift_vector.y
+
+    def update(self, shift_vector):
+
+        self.animate()
+        self.shift(shift_vector)
+
 class Door(Animated):
 
     def __init__(self, pos):
