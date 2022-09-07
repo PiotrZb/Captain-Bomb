@@ -34,9 +34,9 @@ class Moveable(pygame.sprite.Sprite):
         self.additional_yvel -= 8
 
         if dir == 'right':
-            self.additional_xvel += 4
+            self.additional_xvel += 6
         else:
-            self.additional_xvel -= 4
+            self.additional_xvel -= 6
 
 
     def hit_by_bomb(self,bomb_midbottom):

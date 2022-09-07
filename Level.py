@@ -172,7 +172,7 @@ class Level:
                                             player.current_status)
 
         # enemies
-        self.enemies.update(self.colidable_tiles, self.tiles_shift_vector, player)
+        self.enemies.update(self.colidable_tiles, self.tiles_shift_vector, player, self.bombs.sprites())
         for index,enemy in enumerate(self.enemies):
             self.enemies_particles.sprites()[index].update(enemy.rect.midbottom, enemy.facing_direction, self.tiles_shift_vector, enemy.current_status)
 

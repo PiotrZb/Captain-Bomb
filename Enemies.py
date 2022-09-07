@@ -1,7 +1,7 @@
 import pygame
 
 from Moveable_Animated_Alive import Alive
-from settings import player_speed
+from settings import player_speed, bomb_radius
 
 
 class BaldPirate(Alive):
@@ -27,9 +27,9 @@ class BaldPirate(Alive):
         # bald pirate attributes
         self.kick_ready = True
 
-    def control(self, player):
+    def control(self, player, bombs):
 
-        # checking if player was hit
+        # checking if player or bomb was hit
         if self.animation_type == 'attack' and self.kick_ready and int(self.animation_index) == len(
                 self.animations[self.animation_type]) - 7:
             self.kick_ready = False
@@ -39,6 +39,13 @@ class BaldPirate(Alive):
                     player.rect.center[0] < self.rect.center[0] and self.facing_direction == 'left')):
                 player.dmg += 25
                 player.hit_by_enemy(self.facing_direction)
+
+            for bomb in bombs:
+                if self.rect.colliderect(bomb.rect) and (
+                        (bomb.rect.center[0] > self.rect.center[0] and self.facing_direction == 'right') or (
+                        bomb.rect.center[0] < self.rect.center[0] and self.facing_direction == 'left')):
+                    bomb.hit_by_enemy(self.facing_direction)
+
 
         # calculating distance to player
         player_vec = pygame.math.Vector2(player.rect.center)
@@ -74,6 +81,30 @@ class BaldPirate(Alive):
         else:
             self.shift_vector.x = 0
 
+        for bomb in bombs:
+
+            # calculating distance to bomb
+            bomb_vec = pygame.math.Vector2(bomb.rect.center)
+            distance_to_bomb = bomb_vec.distance_to(self.rect.center)
+
+            if distance_to_bomb < bomb_radius and abs(self.rect.y - bomb.rect.y) < bomb.rect.height:
+
+                if bomb.rect.center[0] < self.rect.center[0]:
+                    self.facing_direction = 'left'
+                    self.shift_vector.x = -0.5
+
+                elif bomb.rect.center[0] > self.rect.center[0]:
+                    self.facing_direction = 'right'
+                    self.shift_vector.x = 0.5
+
+                if bomb.rect.colliderect(self.rect) and (
+                        (bomb.rect.center[0] <= self.rect.midright[0] and self.facing_direction == 'right') or (
+                        bomb.rect.center[0] >= self.rect.midleft[0] and self.facing_direction == 'left')):
+                    self.shift_vector.x = 0
+                    if self.animation_type != 'attack':
+                        self.change_animation('attack')
+                        self.kick_ready = True
+
     def update_animation(self):
 
         if not self.non_looped_animation_in_progress and self.is_alive:
@@ -104,12 +135,12 @@ class BaldPirate(Alive):
             elif self.dmg > 0:
                 self.change_animation('dead hit')
 
-    def update(self, tiles, tiles_shift_vector, player):
+    def update(self, tiles, tiles_shift_vector, player, bombs):
 
         # movement update
         if self.is_alive:
             self.update_status()
-            self.control(player)
+            self.control(player, bombs)
 
         self.collisions(tiles)
         self.rect.x += tiles_shift_vector.x
