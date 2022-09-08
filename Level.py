@@ -4,11 +4,10 @@ import pygame
 from random import randint
 import GUI
 
-
 import Tile
 import StaticObjects
 from Player import Player
-from settings import tile_size, screen_width, player_speed, bomb_radius, level_textures
+from settings import tile_size, screen_width, player_speed, bomb_radius, screen_height
 from Particles import Particles
 import Enemies
 
@@ -16,6 +15,10 @@ import Enemies
 class Level:
 
     def __init__(self, layouts):
+
+        # background
+        self.background_image = pygame.image.load('textures/backgrounds/background.png').convert_alpha()
+        self.background_image = pygame.transform.scale(self.background_image, (screen_width, screen_height))
 
         # map
         self.colidable_tiles = pygame.sprite.Group()
@@ -45,7 +48,7 @@ class Level:
         self.hearts = pygame.sprite.Group()
 
         # gui
-        self.health_bar = GUI.HealthBar((10,10))
+        self.health_bar = GUI.HealthBar((20, 20))
 
         self.load_level()
 
@@ -125,9 +128,43 @@ class Level:
                                     else:
                                         path = 'textures/non-animated objects/green bottle.png'
 
-                                    self.noncolidable_tiles.add(
-                                        StaticObjects.StaticObject(path, (x * tile_size, y * tile_size),
-                                                                   rotation=rotation, flipx=flipx))
+                                    bottle = StaticObjects.StaticObject(path, (x * tile_size, y * tile_size),
+                                                                        rotation=rotation, flipx=flipx)
+                                    bottle.rect.topleft += pygame.Vector2(0, tile_size - bottle.rect.height)
+                                    self.noncolidable_tiles.add(bottle)
+
+                                # skulls
+                                elif type == '11':
+
+                                    random_number = randint(0, 1)
+                                    if random_number == 0:
+                                        flipx = False
+                                    else:
+                                        flipx = True
+
+                                    random_number = randint(0, 1)
+                                    if random_number == 0:
+                                        flipy = False
+                                    else:
+                                        flipy = True
+
+                                    random_number = randint(0, 4)
+                                    if random_number == 0:
+                                        rotation = 0
+                                    elif random_number == 1:
+                                        rotation = 90
+                                    elif random_number == 2:
+                                        rotation = 180
+                                    elif random_number == 3:
+                                        rotation = -180
+                                    else:
+                                        rotation = -90
+
+                                    skull = StaticObjects.StaticObject('textures/non-animated objects/skull.png',
+                                                                       (x * tile_size, y * tile_size), flipx=flipx,
+                                                                       flipy=flipy, rotation=rotation)
+                                    skull.rect.topleft += pygame.Vector2(0, tile_size - skull.rect.height)
+                                    self.noncolidable_tiles.add(skull)
 
                                 # tables
                                 elif type == '12':
@@ -145,12 +182,13 @@ class Level:
 
                                 # chins
                                 elif type == '4' or type == '5':
-                                    random_number = randint(0,1)
+                                    random_number = randint(0, 1)
                                     if random_number == 0:
                                         type = 'small'
                                     else:
                                         type = 'big'
-                                    self.noncolidable_tiles.add(StaticObjects.Chain((x * tile_size, y * tile_size), type))
+                                    self.noncolidable_tiles.add(
+                                        StaticObjects.Chain((x * tile_size, y * tile_size), type))
 
                                 # doors
                                 elif type == '0':
@@ -177,8 +215,9 @@ class Level:
 
         # enemies
         self.enemies.update(self.colidable_tiles, self.tiles_shift_vector, player, self.bombs.sprites())
-        for index,enemy in enumerate(self.enemies):
-            self.enemies_particles.sprites()[index].update(enemy.rect.midbottom, enemy.facing_direction, self.tiles_shift_vector, enemy.current_status)
+        for index, enemy in enumerate(self.enemies):
+            self.enemies_particles.sprites()[index].update(enemy.rect.midbottom, enemy.facing_direction,
+                                                           self.tiles_shift_vector, enemy.current_status)
 
         # bombs
         self.bombs.update(self.colidable_tiles, self.tiles_shift_vector)
@@ -233,6 +272,8 @@ class Level:
         self.health_bar.update(player.hp)
 
     def draw(self, screen):
+
+        screen.blit(self.background_image, (0, 0))
 
         self.noncolidable_tiles.draw(screen)
         self.colidable_tiles.draw(screen)
