@@ -2,6 +2,7 @@ import sys
 
 import pygame
 from random import randint
+import GUI
 
 
 import Tile
@@ -42,6 +43,9 @@ class Level:
 
         # hearts
         self.hearts = pygame.sprite.Group()
+
+        # gui
+        self.health_bar = GUI.HealthBar((10,10))
 
         self.load_level()
 
@@ -225,8 +229,8 @@ class Level:
             elif heart.animation_type == 'collected' and not heart.non_looped_animation_in_progress:
                 self.hearts.remove(heart)
 
-
-
+        # gui update
+        self.health_bar.update(player.hp)
 
     def draw(self, screen):
 
@@ -244,6 +248,7 @@ class Level:
 
         self.bombs.draw(screen)
         self.hearts.draw(screen)
+        self.health_bar.draw(screen)
 
     def shift_tiles(self):
 
