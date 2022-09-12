@@ -2,6 +2,7 @@ import pygame
 
 from settings import *
 from Level import Level
+from GUI import Menu
 
 
 class Game:
@@ -21,14 +22,19 @@ class Game:
         pygame.font.init()
         self.font = pygame.font.SysFont("Arial", 18, bold=True)
 
+        # main menu
+        self.main_menu = Menu(self.screen.get_rect().center)
+
         # Levels
         load_textures()
         self.Level1 = Level(layouts1)
 
-
     def check_events(self):
 
         for event in pygame.event.get():
+
+            if self.main_menu.active:
+                self.main_menu.menu_events()
 
             # game exit
             if event.type == pygame.QUIT:
@@ -39,6 +45,10 @@ class Game:
                 # fullscreen mode
                 if event.key == pygame.K_j:
                     pygame.display.toggle_fullscreen()
+
+                # exit menu
+                elif event.key == pygame.K_ESCAPE:
+                    self.main_menu.switch_visibility()
 
     def show_fps(self):
 
@@ -54,11 +64,15 @@ class Game:
             self.check_events()
             self.screen.fill((0, 0, 0))
 
-            # updates
-            self.Level1.update()
+            if self.main_menu.active:
+                self.main_menu.update()
+                self.main_menu.draw(self.screen)
+            else:
+                # updates
+                self.Level1.update()
 
-            # draw elements here
-            self.Level1.draw(self.screen)
+                # draw elements here
+                self.Level1.draw(self.screen)
 
             self.show_fps()
             pygame.display.update()
