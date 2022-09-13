@@ -1,6 +1,7 @@
 import pygame
 
 from settings import hp, screen_height, screen_width
+from Moveable_Animated_Alive import Animated
 
 
 class Button(pygame.sprite.Sprite):
@@ -39,9 +40,81 @@ class Button(pygame.sprite.Sprite):
         self.image.blit(self.txt, (self.rect.width / 2 - txt_rect.width / 2, self.rect.height / 2 - txt_rect.height / 2  + self.offset_y))
 
 
-class Menu(pygame.sprite.Group):
+class PauseMenu(pygame.sprite.Group):
 
-    def __init__(self, screen_center):
+    def __init__(self):
+
+        super().__init__()
+
+        self.active = False
+
+        # background
+        background = pygame.image.load('textures/backgrounds/gaus_background.png').convert_alpha()
+        self.background = pygame.sprite.Sprite()
+        self.background.image = pygame.transform.scale(background,(screen_width, screen_height))
+        self.background.rect = self.background.image.get_rect()
+        self.add(self.background)
+
+        # baner
+        self.baner = pygame.sprite.Sprite()
+        texture = pygame.image.load('textures/gui/menu/baner/small baner.png').convert_alpha()
+        self.baner.image = pygame.transform.scale(texture, (texture.get_rect().width * 6, texture.get_rect().height * 6))
+        self.baner.rect = self.baner.image.get_rect()
+        self.baner.rect.center = (screen_width / 2, 100)
+        font = pygame.font.SysFont("Arial", 30, bold=True)
+        text = font.render('PAUSE', 1, pygame.Color('black'))
+        text_rect = text.get_rect()
+        baner_rect = self.baner.rect
+        self.baner.image.blit(text,(baner_rect.width/2 - text_rect.width/2, baner_rect.height/2 - text_rect.height/2 + 15))
+        self.add(self.baner)
+
+        # buttons
+        self.buttons = []
+        self.resume_button = Button((640, 360),'Resume')
+        self.add(self.resume_button)
+        self.buttons.append(self.resume_button)
+        self.settings_button = Button((640, 436),'Settings') # + 76 y
+        self.add(self.settings_button)
+        self.buttons.append(self.settings_button)
+        self.quit_button = Button((640, 512), 'Quit')  # + 76 y
+        self.add(self.quit_button)
+        self.buttons.append(self.quit_button)
+
+    def switch_visibility(self):
+        self.active = not self.active
+
+    def menu_events(self):
+
+        mouse_pos = pygame.mouse.get_pos()
+
+        for button in self.buttons:
+            if button.rect.collidepoint(mouse_pos):
+                button.font_color = 'red'
+                if pygame.mouse.get_pressed()[0] and not button.clicked:
+                    button.clicked = True
+                    button.image = button.textures[1]
+                    button.offset_y = 0
+                elif not pygame.mouse.get_pressed()[0] and button.clicked:
+                    button.clicked = False
+                    button.image = button.textures[0]
+                    button.font_color = 'black'
+                    button.offset_y = -5
+
+                    # resume
+                    if button == self.resume_button:
+                        self.active = False
+
+                    # exit
+                    if button == self.quit_button:
+                        return 0
+            else:
+                button.font_color = 'black'
+
+        return 1
+
+class MainMenu(pygame.sprite.Group):
+
+    def __init__(self):
 
         super().__init__()
 
@@ -63,8 +136,38 @@ class Menu(pygame.sprite.Group):
         self.add(self.baner)
 
         # buttons
+        self.buttons = []
         self.new_game_button = Button((640, 360),'New Game')
         self.add(self.new_game_button)
+        self.buttons.append(self.new_game_button)
+        self.settings_button = Button((640, 436),'Settings') # + 76 y
+        self.add(self.settings_button)
+        self.buttons.append(self.settings_button)
+        self.credits_button = Button((640, 512), 'Credits')  # + 76 y
+        self.add(self.credits_button)
+        self.buttons.append(self.credits_button)
+        self.exit_button = Button((640, 588), 'Exit')  # + 76 y
+        self.add(self.exit_button)
+        self.buttons.append(self.exit_button)
+
+        # animated sprites
+        self.hero_sprite = Animated()
+        self.hero_sprite.animations = {'idle':[]}
+        self.hero_sprite.looped_animations = ['idle']
+        self.hero_sprite.load_textures('textures/player', 4)
+        self.hero_sprite.image = self.hero_sprite.animations[self.hero_sprite.animation_type][0]
+        self.hero_sprite.rect = self.hero_sprite.image.get_rect()
+        self.hero_sprite.rect.center += pygame.Vector2(120, 350)
+        self.add(self.hero_sprite)
+
+        self.enemy_sprite = Animated()
+        self.enemy_sprite.animations = {'idle': []}
+        self.enemy_sprite.looped_animations = ['idle']
+        self.enemy_sprite.load_textures('textures/enemies/captain', 4)
+        self.enemy_sprite.image = self.enemy_sprite.animations[self.enemy_sprite.animation_type][0]
+        self.enemy_sprite.rect = self.enemy_sprite.image.get_rect()
+        self.enemy_sprite.rect.center += pygame.Vector2(840, 300)
+        self.add(self.enemy_sprite)
 
     def switch_visibility(self):
         self.active = not self.active
@@ -73,23 +176,35 @@ class Menu(pygame.sprite.Group):
 
         mouse_pos = pygame.mouse.get_pos()
 
-        # new game
-        if self.new_game_button.rect.collidepoint(mouse_pos):
-            self.new_game_button.font_color = 'red'
-            if pygame.mouse.get_pressed()[0] and not self.new_game_button.clicked:
-                self.new_game_button.clicked = True
-                self.new_game_button.image = self.new_game_button.textures[1]
-                self.new_game_button.offset_y = 0
-            elif not pygame.mouse.get_pressed()[0] and self.new_game_button.clicked:
-                self.active = False
-                self.new_game_button.clicked = False
-                self.new_game_button.image = self.new_game_button.textures[0]
-                self.new_game_button.font_color = 'black'
-                self.new_game_button.offset_y = -5
-        else:
-            self.new_game_button.font_color = 'black'
+        for button in self.buttons:
+            if button.rect.collidepoint(mouse_pos):
+                button.font_color = 'red'
+                if pygame.mouse.get_pressed()[0] and not button.clicked:
+                    button.clicked = True
+                    button.image = button.textures[1]
+                    button.offset_y = 0
+                elif not pygame.mouse.get_pressed()[0] and button.clicked:
+                    button.clicked = False
+                    button.image = button.textures[0]
+                    button.font_color = 'black'
+                    button.offset_y = -5
 
+                    # new game
+                    if button == self.new_game_button:
+                        self.active = False
+                        return 2
 
+                    # exit
+                    if button == self.exit_button:
+                        return 0
+            else:
+                button.font_color = 'black'
+
+        return 1
+
+    def update_animations(self):
+        self.hero_sprite.animate()
+        self.enemy_sprite.animate(flip=True)
 
 
 class HealthBar(pygame.sprite.Group):

@@ -2,7 +2,7 @@ import pygame
 
 from settings import *
 from Level import Level
-from GUI import Menu
+from GUI import MainMenu, PauseMenu
 
 
 class Game:
@@ -22,19 +22,32 @@ class Game:
         pygame.font.init()
         self.font = pygame.font.SysFont("Arial", 18, bold=True)
 
-        # main menu
-        self.main_menu = Menu(self.screen.get_rect().center)
+        # menu
+        self.main_menu = MainMenu()
+        self.pause_menu = PauseMenu()
 
         # Levels
         load_textures()
-        self.Level1 = Level(layouts1)
 
     def check_events(self):
 
         for event in pygame.event.get():
 
             if self.main_menu.active:
-                self.main_menu.menu_events()
+                x = self.main_menu.menu_events()
+
+                # exit
+                if x == 0:
+                    self.status = 'off'
+
+                # new game
+                elif x == 2:
+                    self.Level1 = Level(layouts1)
+
+            if self.pause_menu.active and not self.main_menu.active:
+                if not self.pause_menu.menu_events():
+                    self.main_menu.switch_visibility()
+                    self.pause_menu.active = False
 
             # game exit
             if event.type == pygame.QUIT:
@@ -47,8 +60,8 @@ class Game:
                     pygame.display.toggle_fullscreen()
 
                 # exit menu
-                elif event.key == pygame.K_ESCAPE:
-                    self.main_menu.switch_visibility()
+                elif event.key == pygame.K_ESCAPE and not self.main_menu.active:
+                    self.pause_menu.switch_visibility()
 
     def show_fps(self):
 
@@ -66,7 +79,13 @@ class Game:
 
             if self.main_menu.active:
                 self.main_menu.update()
+                self.main_menu.update_animations()
                 self.main_menu.draw(self.screen)
+
+            elif self.pause_menu.active:
+                self.pause_menu.update()
+                self.pause_menu.draw(self.screen)
+
             else:
                 # updates
                 self.Level1.update()

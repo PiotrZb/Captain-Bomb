@@ -149,10 +149,10 @@ class Animated(pygame.sprite.Sprite):
         # checking if animation is looped
         if self.animation_type not in self.looped_animations: self.non_looped_animation_in_progress = True
 
-    def load_textures(self, textures_path):
+    def load_textures(self, textures_path, scale = 1):
 
         for animation_type in self.animations.keys():
-            self.animations[animation_type] = import_animation(textures_path + '/' + animation_type)
+            self.animations[animation_type] = import_animation(textures_path + '/' + animation_type, scale)
 
     def animate(self, flip=False):
 
