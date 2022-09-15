@@ -4,9 +4,9 @@ from Moveable_Animated_Alive import Alive
 from settings import player_speed, bomb_radius
 
 
-class BaldPirate(Alive):
+class Enemy(Alive):
 
-    def __init__(self, pos):
+    def __init__(self, pos, type='captain'):
 
         super().__init__()
 
@@ -14,15 +14,98 @@ class BaldPirate(Alive):
         self.animations = {'idle': [], 'run': [], 'jump': [], 'fall': [], 'jump anticipation': [], 'ground': [],
                            'hit': [], 'dead hit': [], 'dead ground': [], 'attack': []}
         self.looped_animations = ['idle', 'run', 'jump anticipation']
-        self.load_textures('textures/enemies/bald pirate')
+        self.load_textures('textures/enemies/' + type)
 
-        # sprite attributes update
+        # sprite attributes
         self.image = self.animations[self.animation_type][0]
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
 
         # movement
         self.speed = player_speed
+
+    def control(self, player, bombs):
+        pass
+
+    def update_animation(self):
+
+        if not self.non_looped_animation_in_progress and self.is_alive:
+
+            if (self.fall_dmg > 0 or self.dmg > 0) and self.animation_type != 'hit':
+                self.change_animation('hit')
+
+            elif self.current_status == 'running' and self.animation_type != 'run':
+                self.change_animation('run')
+
+            elif self.current_status == 'idle' and self.animation_type != 'idle':
+                self.change_animation('idle')
+
+            elif self.current_status == 'falling' and self.animation_type != 'fall':
+                self.change_animation('fall')
+
+            elif self.current_status == 'jumping' and self.animation_type != 'jump':
+                self.change_animation('jump')
+
+            elif self.current_status == 'landing' and self.animation_type != 'ground':
+                self.change_animation('ground')
+
+        elif not self.is_alive and self.animation_type not in ['dead ground', 'dead hit']:
+
+            if self.fall_dmg > 0:
+                self.change_animation('dead ground')
+
+            elif self.dmg > 0:
+                self.change_animation('dead hit')
+
+    def update(self, tiles, tiles_shift_vector, player, bombs):
+
+        # movement update
+        if self.is_alive:
+            self.update_status()
+            self.control(player, bombs)
+
+        self.collisions(tiles)
+        self.rect.x += tiles_shift_vector.x
+        self.rect.y += tiles_shift_vector.y
+
+        # animation update
+        self.update_animation()
+
+        # checking if sprite should be flipped
+        if self.facing_direction == 'left':
+            self.animate(True)
+        else:
+            self.animate(False)
+
+        # applying dmg
+        if self.is_alive:
+            self.apply_dmg()
+
+        # eliminating some bugs
+        self.rect.size = self.image.get_size()
+        if not self.is_alive and self.shift_vector.y:
+            self.shift_vector.x = 0
+
+
+class Captain(Enemy):
+
+    def __init__(self, pos):
+
+        super().__init__(pos,'captain')
+
+        # animations
+        self.animations['scare run'] = []
+        self.looped_animations.append('scare run')
+
+    def control(self, player, bombs):
+        pass
+
+
+class BaldPirate(Enemy):
+
+    def __init__(self, pos):
+
+        super().__init__(pos, 'bald pirate')
 
         # bald pirate attributes
         self.kick_ready = True
@@ -105,61 +188,44 @@ class BaldPirate(Alive):
                         self.change_animation('attack')
                         self.kick_ready = True
 
-    def update_animation(self):
 
-        if not self.non_looped_animation_in_progress and self.is_alive:
+class BigGuy(Enemy):
 
-            if (self.fall_dmg > 0 or self.dmg > 0) and self.animation_type != 'hit':
-                self.change_animation('hit')
+    def __init__(self, pos):
 
-            elif self.current_status == 'running' and self.animation_type != 'run':
-                self.change_animation('run')
+        super().__init__(pos,'big guy')
 
-            elif self.current_status == 'idle' and self.animation_type != 'idle':
-                self.change_animation('idle')
+        self.animations['idle bomb'] = []
+        self.animations['pick'] = []
+        self.animations['run bomb'] = []
+        self.animations['throw'] = []
 
-            elif self.current_status == 'falling' and self.animation_type != 'fall':
-                self.change_animation('fall')
+        self.looped_animations.append('idle bomb')
+        self.looped_animations.append('run bomb')
 
-            elif self.current_status == 'jumping' and self.animation_type != 'jump':
-                self.change_animation('jump')
+    def control(self, player, bombs):
+        pass
 
-            elif self.current_status == 'landing' and self.animation_type != 'ground':
-                self.change_animation('ground')
 
-        elif not self.is_alive and self.animation_type not in ['dead ground', 'dead hit']:
+class Cucumber(Enemy):
 
-            if self.fall_dmg > 0:
-                self.change_animation('dead ground')
+    def __init__(self, pos):
 
-            elif self.dmg > 0:
-                self.change_animation('dead hit')
+        super().__init__(pos,'cucumber')
 
-    def update(self, tiles, tiles_shift_vector, player, bombs):
+        self.animations['blow the wick'] = []
 
-        # movement update
-        if self.is_alive:
-            self.update_status()
-            self.control(player, bombs)
+    def control(self, player, bombs):
+        pass
 
-        self.collisions(tiles)
-        self.rect.x += tiles_shift_vector.x
-        self.rect.y += tiles_shift_vector.y
 
-        # animation update
-        self.update_animation()
+class Whale(Enemy):
 
-        # checking if sprite should be flipped
-        if self.facing_direction == 'left':
-            self.animate(True)
-        else:
-            self.animate(False)
+    def __init__(self, pos):
 
-        # applying dmg
-        if self.is_alive:
-            self.apply_dmg()
+        super().__init__(pos,'whale')
 
-        # eliminating some bugs
-        self.rect.size = self.image.get_size()
-        if not self.is_alive and self.shift_vector.y:
-            self.shift_vector.x = 0
+        self.animations['swallow'] = []
+
+    def control(self, player, bombs):
+        pass

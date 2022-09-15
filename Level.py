@@ -72,8 +72,22 @@ class Level:
                                 if type == '18':
                                     self.player.add(Player((x * tile_size, y * tile_size)))
                                 elif type == '17':
-                                    self.enemies.add(Enemies.BaldPirate((x * tile_size, y * tile_size)))
-                                    self.enemies_particles.add(Particles())
+                                    random_number = randint(0,4)
+                                    if random_number == 0:
+                                        self.enemies.add(Enemies.Captain((x * tile_size, y * tile_size)))
+                                        self.enemies_particles.add(Particles())
+                                    elif random_number == 1:
+                                        self.enemies.add(Enemies.BaldPirate((x * tile_size, y * tile_size)))
+                                        self.enemies_particles.add(Particles())
+                                    elif random_number == 2:
+                                        self.enemies.add(Enemies.BigGuy((x * tile_size, y * tile_size)))
+                                        self.enemies_particles.add(Particles())
+                                    elif random_number == 3:
+                                        self.enemies.add(Enemies.Cucumber((x * tile_size, y * tile_size)))
+                                        self.enemies_particles.add(Particles())
+                                    elif random_number == 4:
+                                        self.enemies.add(Enemies.Whale((x * tile_size, y * tile_size)))
+                                        self.enemies_particles.add(Particles())
                             case 'shelves':
                                 self.colidable_tiles.add(Tile.Shelves((x * tile_size, y * tile_size), type))
                             case 'background objects':
