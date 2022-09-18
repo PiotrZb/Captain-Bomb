@@ -2,6 +2,7 @@ import pygame
 
 from Moveable_Animated_Alive import Alive
 from settings import player_speed, bomb_radius
+from functions import import_animation
 
 
 class Enemy(Alive):
@@ -94,11 +95,105 @@ class Captain(Enemy):
         super().__init__(pos,'captain')
 
         # animations
-        self.animations['scare run'] = []
+        self.animations['scare run'] = import_animation('textures/enemies/captain/scare run')
         self.looped_animations.append('scare run')
 
+        # Captain attributes
+        self.attack_ready = True
+        self.scared = False
+        self.sc_timer = pygame.time.get_ticks()
+
     def control(self, player, bombs):
-        pass
+
+        # checking if player was hit
+        if self.animation_type == 'attack' and self.attack_ready and int(self.animation_index) == len(
+                self.animations[self.animation_type]) - 3:
+            self.attack_ready = False
+
+            if self.rect.colliderect(player.rect) and (
+                    (player.rect.center[0] > self.rect.center[0] and self.facing_direction == 'right') or (
+                    player.rect.center[0] < self.rect.center[0] and self.facing_direction == 'left')):
+                player.dmg += 25
+                player.hit_by_enemy(self.facing_direction)
+
+        # calculating distance to player
+        player_vec = pygame.math.Vector2(player.rect.center)
+        distance_to_player = player_vec.distance_to(self.rect.center)
+
+        # logic
+        if distance_to_player < 500 and abs(self.rect.y - player.rect.y) < player.rect.height and player.is_alive and not self.scared:
+
+            # player on right
+            if player.rect.center[0] > self.rect.center[0]:
+                self.facing_direction = 'right'
+
+                if player.rect.center[0] <= self.rect.midright[0]:
+                    self.shift_vector.x = 0
+                    if self.animation_type != 'attack':
+                        self.change_animation('attack')
+                        self.attack_ready = True
+                elif not self.non_looped_animation_in_progress:
+                    self.shift_vector.x = 0.5
+
+            # player on left
+            elif player.rect.center[0] < self.rect.center[0]:
+                self.facing_direction = 'left'
+
+                if player.rect.center[0] >= self.rect.midleft[0]:
+                    self.shift_vector.x = 0
+                    if self.animation_type != 'attack':
+                        self.change_animation('attack')
+                        self.attack_ready = True
+                elif not self.non_looped_animation_in_progress:
+                    self.shift_vector.x = -0.5
+
+        elif not self.scared:
+            self.shift_vector.x = 0
+
+        for bomb in bombs:
+
+            # calculating distance to bomb
+            bomb_vec = pygame.math.Vector2(bomb.rect.center)
+            distance_to_bomb = bomb_vec.distance_to(self.rect.center)
+
+            if distance_to_bomb < bomb_radius and abs(self.rect.y - bomb.rect.y) < bomb.rect.height or self.scared:
+
+                if bomb.rect.center[0] <= self.rect.center[0]:
+                    self.facing_direction = 'right'
+                    self.shift_vector.x = 0.5
+                    self.current_status = 'scared'
+                    self.scared = True
+                    self.sc_timer = pygame.time.get_ticks()
+                    if self.animation_type != 'scare run':
+                        self.change_animation('scare run')
+
+                elif bomb.rect.center[0] > self.rect.center[0]:
+                    self.facing_direction = 'left'
+                    self.shift_vector.x = -0.5
+                    self.current_status = 'scared'
+                    self.scared = True
+                    self.sc_timer = pygame.time.get_ticks()
+                    if self.animation_type != 'scare run':
+                        self.change_animation('scare run')
+
+        # update
+        current_ticks = pygame.time.get_ticks()
+        if not self.scared:
+            self.sc_timer = current_ticks
+        elif current_ticks - self.sc_timer > 3.0:
+            self.scared = False
+            self.sc_timer = current_ticks
+            if self.animation_type == 'scare run':
+                self.change_animation('idle')
+                self.current_status = 'idle'
+                self.shift_vector.x = 0
+
+        else:
+            self.current_status = 'scare run'
+            if self.facing_direction == 'left':
+                self.shift_vector.x = -0.5
+            else:
+                self.shift_vector.x = 0.5
 
 
 class BaldPirate(Enemy):
