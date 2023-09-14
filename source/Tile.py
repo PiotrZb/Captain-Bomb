@@ -1,6 +1,6 @@
 import pygame
 
-from settings import tile_size, level_textures
+from Settings import tile_size, level_textures
 
 
 class Tile(pygame.sprite.Sprite):

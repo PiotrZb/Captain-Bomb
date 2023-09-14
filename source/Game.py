@@ -1,6 +1,6 @@
 import pygame
 
-from settings import *
+from Settings import *
 from Level import Level
 from GUI import MainMenu, PauseMenu
 

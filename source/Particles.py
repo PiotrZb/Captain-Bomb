@@ -1,4 +1,5 @@
 from Moveable_Animated_Alive import Animated
+from Settings import current_dir
 
 
 class Particles(Animated):
@@ -10,7 +11,7 @@ class Particles(Animated):
         # animations
         self.animations = {'run particles':[],'jump particles':[],'fall particles':[]}
         self.looped_animations = ['run particles']
-        self.load_textures('textures/particles')
+        self.load_textures(current_dir + '/../textures/particles')
         self.animation_type = 'run particles'
         self.image = self.animations[self.animation_type][0]
         self.rect = self.image.get_rect()

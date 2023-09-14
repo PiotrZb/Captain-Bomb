@@ -1,7 +1,7 @@
 import pygame
 
 from Moveable_Animated_Alive import Moveable, Animated
-from settings import bomb_delay
+from Settings import bomb_delay, current_dir
 
 
 class Bomb(Moveable, Animated):
@@ -13,7 +13,7 @@ class Bomb(Moveable, Animated):
         # animations
         self.animations = {'bomb off': [], 'bomb on': [], 'explosion': []}
         self.looped_animations = ['bomb off', 'bomb on']
-        self.load_textures('textures/bomb')
+        self.load_textures(current_dir + '/../textures/bomb')
         if bomb_on: self.animation_type = 'bomb on'
         else: self.animation_type = 'bomb off'
 

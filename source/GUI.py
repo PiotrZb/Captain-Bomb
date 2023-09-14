@@ -1,6 +1,6 @@
 import pygame
 
-from settings import hp, screen_height, screen_width
+from Settings import hp, screen_height, screen_width, current_dir
 from Moveable_Animated_Alive import Animated
 
 
@@ -22,9 +22,9 @@ class Button(pygame.sprite.Sprite):
 
         # sprite attributes
         self.textures = []
-        image = pygame.image.load('textures/gui/menu/button/basic.png').convert_alpha()
+        image = pygame.image.load(current_dir + '//../textures/gui/menu/button/basic.png').convert_alpha()
         self.textures.append(pygame.transform.scale(image,(image.get_rect().width * 4, image.get_rect().height * 4)))
-        image = pygame.image.load('textures/gui/menu/button/clicked.png').convert_alpha()
+        image = pygame.image.load(current_dir + '//../textures/gui/menu/button/clicked.png').convert_alpha()
         self.textures.append(pygame.transform.scale(image,(image.get_rect().width * 4, image.get_rect().height * 4)))
         self.image = self.textures[0]
         self.rect = self.image.get_rect()
@@ -49,7 +49,7 @@ class PauseMenu(pygame.sprite.Group):
         self.active = False
 
         # background
-        background = pygame.image.load('textures/backgrounds/gaus_background.png').convert_alpha()
+        background = pygame.image.load(current_dir + '//../textures/backgrounds/gaus_background.png').convert_alpha()
         self.background = pygame.sprite.Sprite()
         self.background.image = pygame.transform.scale(background,(screen_width, screen_height))
         self.background.rect = self.background.image.get_rect()
@@ -57,7 +57,7 @@ class PauseMenu(pygame.sprite.Group):
 
         # baner
         self.baner = pygame.sprite.Sprite()
-        texture = pygame.image.load('textures/gui/menu/baner/small baner.png').convert_alpha()
+        texture = pygame.image.load(current_dir + '//../textures/gui/menu/baner/small baner.png').convert_alpha()
         self.baner.image = pygame.transform.scale(texture, (texture.get_rect().width * 6, texture.get_rect().height * 6))
         self.baner.rect = self.baner.image.get_rect()
         self.baner.rect.center = (screen_width / 2, 100)
@@ -121,7 +121,7 @@ class MainMenu(pygame.sprite.Group):
         self.active = True
 
         # background
-        background = pygame.image.load('textures/backgrounds/gaus_background.png').convert_alpha()
+        background = pygame.image.load(current_dir + '//../textures/backgrounds/gaus_background.png').convert_alpha()
         self.background = pygame.sprite.Sprite()
         self.background.image = pygame.transform.scale(background,(screen_width, screen_height))
         self.background.rect = self.background.image.get_rect()
@@ -129,7 +129,7 @@ class MainMenu(pygame.sprite.Group):
 
         # baner
         self.baner = pygame.sprite.Sprite()
-        texture = pygame.image.load('textures/gui/menu/baner/baner.png').convert_alpha()
+        texture = pygame.image.load(current_dir + '//../textures/gui/menu/baner/baner.png').convert_alpha()
         self.baner.image = pygame.transform.scale(texture, (texture.get_rect().width * 3, texture.get_rect().height * 3))
         self.baner.rect = self.baner.image.get_rect()
         self.baner.rect.center = (screen_width/2, 100)
@@ -154,7 +154,7 @@ class MainMenu(pygame.sprite.Group):
         self.hero_sprite = Animated()
         self.hero_sprite.animations = {'idle':[]}
         self.hero_sprite.looped_animations = ['idle']
-        self.hero_sprite.load_textures('textures/player', 4)
+        self.hero_sprite.load_textures(current_dir + '/../textures/player', 4)
         self.hero_sprite.image = self.hero_sprite.animations[self.hero_sprite.animation_type][0]
         self.hero_sprite.rect = self.hero_sprite.image.get_rect()
         self.hero_sprite.rect.center += pygame.Vector2(120, 350)
@@ -163,7 +163,7 @@ class MainMenu(pygame.sprite.Group):
         self.enemy_sprite = Animated()
         self.enemy_sprite.animations = {'idle': []}
         self.enemy_sprite.looped_animations = ['idle']
-        self.enemy_sprite.load_textures('textures/enemies/captain', 4)
+        self.enemy_sprite.load_textures(current_dir + '/../textures/enemies/captain', 4)
         self.enemy_sprite.image = self.enemy_sprite.animations[self.enemy_sprite.animation_type][0]
         self.enemy_sprite.rect = self.enemy_sprite.image.get_rect()
         self.enemy_sprite.rect.center += pygame.Vector2(840, 300)
@@ -213,8 +213,8 @@ class HealthBar(pygame.sprite.Group):
 
         super().__init__()
 
-        self.bar_texture = pygame.image.load('textures/gui/health bar/Health Bar.png').convert_alpha()
-        self.heart_texture = pygame.image.load('textures/gui/health bar/Heart.png').convert_alpha()
+        self.bar_texture = pygame.image.load(current_dir + '/../textures/gui/health bar/Health Bar.png').convert_alpha()
+        self.heart_texture = pygame.image.load(current_dir + '/../textures/gui/health bar/Heart.png').convert_alpha()
 
         # sprites
         self.bar_sprite = pygame.sprite.Sprite()

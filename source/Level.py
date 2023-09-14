@@ -7,7 +7,7 @@ import GUI
 import Tile
 import StaticObjects
 from Player import Player
-from settings import tile_size, screen_width, player_speed, bomb_radius, screen_height
+from Settings import tile_size, screen_width, player_speed, bomb_radius, screen_height, current_dir
 from Particles import Particles
 import Enemies
 
@@ -17,7 +17,7 @@ class Level:
     def __init__(self, layouts):
 
         # background
-        self.background_image = pygame.image.load('textures/backgrounds/background.png').convert_alpha()
+        self.background_image = pygame.image.load(current_dir + '/../textures/backgrounds/background.png').convert_alpha()
         self.background_image = pygame.transform.scale(self.background_image, (screen_width, screen_height))
 
         # map
@@ -95,7 +95,7 @@ class Level:
                                 # windows
                                 if type == '13':
                                     self.noncolidable_tiles.add(
-                                        StaticObjects.StaticObject('textures/non-animated objects/window.png',
+                                        StaticObjects.StaticObject(current_dir + '/../textures/non-animated objects/window.png',
                                                                    (x * tile_size, y * tile_size)))
                                     self.noncolidable_tiles.add(StaticObjects.Sunlight((x * tile_size, y * tile_size)))
 
@@ -113,7 +113,7 @@ class Level:
                                     else:
                                         flipx = True
                                     self.noncolidable_tiles.add(
-                                        StaticObjects.StaticObject('textures/non-animated objects/barrel.png',
+                                        StaticObjects.StaticObject(current_dir + '/../textures/non-animated objects/barrel.png',
                                                                    (x * tile_size, y * tile_size),
                                                                    pygame.Vector2(0, 20), flipx=flipx))
 
@@ -136,11 +136,11 @@ class Level:
 
                                     random_number = randint(0, 2)
                                     if random_number == 0:
-                                        path = 'textures/non-animated objects/red bottle.png'
+                                        path = current_dir + '/../textures/non-animated objects/red bottle.png'
                                     elif random_number == 1:
-                                        path = 'textures/non-animated objects/blue bottle.png'
+                                        path = current_dir + '/../textures/non-animated objects/blue bottle.png'
                                     else:
-                                        path = 'textures/non-animated objects/green bottle.png'
+                                        path = current_dir + '/../textures/non-animated objects/green bottle.png'
 
                                     bottle = StaticObjects.StaticObject(path, (x * tile_size, y * tile_size),
                                                                         rotation=rotation, flipx=flipx)
@@ -174,7 +174,7 @@ class Level:
                                     else:
                                         rotation = -90
 
-                                    skull = StaticObjects.StaticObject('textures/non-animated objects/skull.png',
+                                    skull = StaticObjects.StaticObject(current_dir + '/../textures/non-animated objects/skull.png',
                                                                        (x * tile_size, y * tile_size), flipx=flipx,
                                                                        flipy=flipy, rotation=rotation)
                                     skull.rect.topleft += pygame.Vector2(0, tile_size - skull.rect.height)
@@ -183,14 +183,14 @@ class Level:
                                 # tables
                                 elif type == '12':
                                     self.noncolidable_tiles.add(
-                                        StaticObjects.StaticObject('textures/non-animated objects/table.png',
+                                        StaticObjects.StaticObject(current_dir + '/../textures/non-animated objects/table.png',
                                                                    (x * tile_size, y * tile_size),
                                                                    pygame.Vector2(0, tile_size - 32)))
 
                                 # chairs
                                 elif type == '8':
                                     self.noncolidable_tiles.add(
-                                        StaticObjects.StaticObject('textures/non-animated objects/chair.png',
+                                        StaticObjects.StaticObject(current_dir + '/../textures/non-animated objects/chair.png',
                                                                    (x * tile_size, y * tile_size),
                                                                    pygame.Vector2(0, tile_size - 56)))
 

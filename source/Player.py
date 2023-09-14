@@ -1,6 +1,6 @@
 import pygame
 
-from settings import bomb_rate
+from Settings import bomb_rate, current_dir
 from Bomb import Bomb
 from Moveable_Animated_Alive import Alive
 
@@ -15,7 +15,7 @@ class Player(Alive):
         self.animations = {'idle': [], 'run': [], 'jump': [], 'fall': [], 'jump anticipation': [], 'ground': [],
                            'hit': [], 'dead hit': [], 'dead ground': [], 'door in': [], 'door out': []}
         self.looped_animations = ['idle', 'run', 'jump anticipation']
-        self.load_textures('textures/player')
+        self.load_textures(current_dir + '/../textures/player')
 
         # sprite attributes update
         self.image = self.animations[self.animation_type][0]

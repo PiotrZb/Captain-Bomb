@@ -1,7 +1,7 @@
 import pygame
 
 from Moveable_Animated_Alive import Animated
-from settings import tile_size
+from Settings import tile_size, current_dir
 
 
 class StaticObject(pygame.sprite.Sprite):
@@ -31,7 +31,7 @@ class Heart(Animated):
         super().__init__()
 
         self.animations = {'idle':[], 'collected':[]}
-        self.load_textures('textures/heart')
+        self.load_textures(current_dir + '/../textures/heart')
         self.looped_animations = ['idle']
         self.animation_type = 'idle'
         self.image = self.animations[self.animation_type][0]
@@ -57,7 +57,7 @@ class Door(Animated):
         super().__init__()
 
         self.animations = {'closed': [], 'opening': [], 'closing': []}
-        self.load_textures('textures/door')
+        self.load_textures(current_dir + '/../textures/door')
         self.looped_animations = ['closed']
         self.animation_type = 'closing'
         self.image = self.animations[self.animation_type][0]
@@ -84,9 +84,9 @@ class Chain(Animated):
 
         self.animations = {'basic': []}
         if type == 'small':
-            self.load_textures('textures/chains/small chain')
+            self.load_textures(current_dir + '/../textures/chains/small chain')
         else:
-            self.load_textures('textures/chains/big chain')
+            self.load_textures(current_dir + '/../textures/chains/big chain')
         self.offset = pygame.Vector2(0, tile_size - 52)
         self.looped_animations = ['basic']
         self.animation_type = 'basic'
@@ -112,7 +112,7 @@ class CandleLight(Animated):
         super().__init__()
 
         self.animations = {'basic': []}
-        self.load_textures('textures/candle light')
+        self.load_textures(current_dir + '/../textures/candle light')
         self.looped_animations = ['basic']
         self.animation_type = 'basic'
         self.image = self.animations[self.animation_type][0]
@@ -136,7 +136,7 @@ class Candle(Animated):
         super().__init__()
 
         self.animations = {'basic': []}
-        self.load_textures('textures/candle')
+        self.load_textures(current_dir + '/../textures/candle')
         self.looped_animations = ['basic']
         self.animation_type = 'basic'
         self.image = self.animations[self.animation_type][0]
@@ -158,7 +158,7 @@ class Sunlight(Animated):
         super().__init__()
 
         self.animations = {'basic': []}
-        self.load_textures('textures/sunlight')
+        self.load_textures(current_dir + '/../textures/sunlight')
         self.looped_animations = ['basic']
         self.animation_type = 'basic'
         self.image = self.animations[self.animation_type][0]

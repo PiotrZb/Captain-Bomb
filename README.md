@@ -1,16 +1,43 @@
-# **Captain Bomb**
-Captain Bomb is a simple platform game written in python using the pygame library.
+# **🎮 Captain Bomb 💣**
 
-# **Game screenshots**
-![1](https://user-images.githubusercontent.com/84187115/233839558-9789f297-0ca3-4184-b70f-b941b63092e1.JPG)
+## Description 📜
 
-![2](https://user-images.githubusercontent.com/84187115/233839561-cc932117-08c4-4639-8a3b-8f0655035556.JPG)
+Captain Bomb is a simple platform game written in `Python3` using the `pygame` library.
 
-![3](https://user-images.githubusercontent.com/84187115/233839591-ecbd3bc8-a860-4978-adc9-b79c2baf7f42.JPG)
+## Gallery 📷
 
-![4](https://user-images.githubusercontent.com/84187115/233839596-79ed9241-f8e0-4fec-ba33-4b062f7fa60b.JPG)
+<p align="center">
+  <img src="gallery/gif1.gif">
+</p>
 
-![5](https://user-images.githubusercontent.com/84187115/233839601-8096739a-c8a5-43b7-92b8-0aba1b4171d4.JPG)
+<p align="center">
+  <img src="gallery/gif2.gif">
+</p>
 
-# **Graphics used in project**
-https://pixelfrog-assets.itch.io/pirate-bomb (Pixel Frog)
+<p align="center">
+  <img src="gallery/gif3.gif">
+</p>
+
+## Usage ⚙️
+
+To run the game you need to install the `pygame` library. This can be done with the following command:
+
+```cmd
+pip install pygame
+
+```
+
+Once `pygame` is installed, you should be able to run the game using the following command in the directory containing the `main.py` file:
+
+```cmd
+python3 main.py
+
+```
+
+## Graphics used in project 🎨
+
+[Pirate Bomb](https://pixelfrog-assets.itch.io/pirate-bomb) - [Pixel Frog](https://pixelfrog-assets.itch.io/) 🐸
+
+## License 📄
+
+[MIT License](LICENSE)

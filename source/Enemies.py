@@ -1,8 +1,8 @@
 import pygame
 
 from Moveable_Animated_Alive import Alive
-from settings import player_speed, bomb_radius
-from functions import import_animation
+from Settings import player_speed, bomb_radius, current_dir
+from Functions import import_animation
 
 
 class Enemy(Alive):
@@ -15,7 +15,7 @@ class Enemy(Alive):
         self.animations = {'idle': [], 'run': [], 'jump': [], 'fall': [], 'jump anticipation': [], 'ground': [],
                            'hit': [], 'dead hit': [], 'dead ground': [], 'attack': []}
         self.looped_animations = ['idle', 'run', 'jump anticipation']
-        self.load_textures('textures/enemies/' + type)
+        self.load_textures(current_dir + '/../textures/enemies/' + type)
 
         # sprite attributes
         self.image = self.animations[self.animation_type][0]
@@ -95,7 +95,7 @@ class Captain(Enemy):
         super().__init__(pos,'captain')
 
         # animations
-        self.animations['scare run'] = import_animation('textures/enemies/captain/scare run')
+        self.animations['scare run'] = import_animation(current_dir + '/../textures/enemies/captain/scare run')
         self.looped_animations.append('scare run')
 
         # Captain attributes

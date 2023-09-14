@@ -1,8 +1,8 @@
 import pygame
 import math
 
-from settings import gravity, jump_speed, animation_rate, hp, bomb_radius
-from functions import import_animation
+from Settings import gravity, jump_speed, animation_rate, hp, bomb_radius
+from Functions import import_animation
 
 
 class Moveable(pygame.sprite.Sprite):
